@@ -55,23 +55,31 @@ class Exporter(object):
                       stubs=[])
         export_payload = dict(recording=header)
         scenario_db = Scenario()
-        stubs = list(scenario_db.get_pre_stubs(scenario))
-        if len(stubs) > 0:
+        stubs = list(scenario_db.get_stubs(scenario))
+        pre_stubs = list(scenario_db.get_pre_stubs(scenario))
+        if len(pre_stubs) > 0:
+            stub_seq = 0
             for i in range(len(stubs)):
                 entry = stubs[i]
-                stub = Stub(entry['stub'], scenario)
+                stub = Stub(entry['stub'], scenario) if entry and "stub" in entry else None
                 # remove scenario & session from stub args
-                args = stub.args()
-                args.pop('scenario', None)
-                args.pop('session', None)
-                stub.set_args(args)
-                stub_file = ('{0}_{1}.json'.format(session, i),
-                             json.dumps(stub.payload, indent=3))
-                export_payload['recording']['stubs'].append(dict(file=stub_file[0]))
-                files.append(stub_file)
+                responses = stub.response_body() if stub else None
+                for r in range(len(responses)):
+                    if stub_seq < len(pre_stubs):
+                        pre_entry = pre_stubs[stub_seq]
+                    if pre_entry:
+                        pre_stub = Stub(pre_entry['stub'], scenario)
+                        args = pre_stub.args()
+                        args.pop('scenario', None)
+                        args.pop('session', None)
+                        pre_stub.set_args(args)
+                        stub_file = ('{0}_{1}.json'.format(session, stub_seq),
+                                 json.dumps(pre_stub.payload, indent=3))
+                        export_payload['recording']['stubs'].append(dict(file=stub_file[0]))
+                        files.append(stub_file)
+                    stub_seq += 1
         else:
-            files.append(('{0}_0.json'.format(session), json.dumps(dummy_stub,
-                                                                   indent=3)))
+            files.append(('{0}_0.json'.format(session), json.dumps(dummy_stub, indent=3)))
 
         runnable_info = {}
         if runnable:
