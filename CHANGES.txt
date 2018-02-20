@@ -11,6 +11,10 @@ Deprecated:
 
 Removed:
 
+0.8.15
+
+Fixed:
+- Fixed yaml export for stubs with multiple responses
 
 0.8.14
 
