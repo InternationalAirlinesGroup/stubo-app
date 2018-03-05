@@ -59,3 +59,7 @@ target/
 # PyCharm
 
 .idea
+
+# Ignoring custom modules imported into the app
+stubo/ext/ba
+stubo/static/cmds/tests/ext/ba
