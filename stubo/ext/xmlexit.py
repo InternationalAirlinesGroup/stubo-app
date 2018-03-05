@@ -227,6 +227,9 @@ class XMLManglerGetResponse(GetResponse):
 
     def doResponse(self):
         stub = self.context['stub']
-        response = self.response_mangler.store(stub.response_body()[0])
-        stub.set_response_body(response)
+
+        if self.response_mangler is not None:
+            response = self.response_mangler.store(stub.response_body()[0])
+            stub.set_response_body(response)
+
         return ExitResponse(self.request, stub)
