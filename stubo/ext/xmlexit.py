@@ -152,7 +152,7 @@ class XMLManglerExit(object):
             else:
                 return XMLManglerPutStub(self.mangler, request, context)
         elif context['function'] == 'get/response':
-            return XMLManglerGetResponse(self.mangler, request, context)
+            return XMLManglerGetResponse(self.mangler, request, context, self.response_mangler)
 
 
 class XMLManglerPutStub(PutStub):
@@ -186,9 +186,10 @@ class PutStubMangleResponse(XMLManglerPutStub):
 
 
 class XMLManglerGetResponse(GetResponse):
-    def __init__(self, mangler, request, context):
+    def __init__(self, mangler, request, context, response_mangler = None):
         GetResponse.__init__(self, request, context)
         self.mangler = mangler
+        self.response_mangler = response_mangler
 
     def substitute_values(self, payload, excludes):
         """Mangle payload with values in the request based on the manglers 
@@ -222,4 +223,13 @@ class XMLManglerGetResponse(GetResponse):
                 matchers.append(self.substitute_values(matcher,
                                                        excludes=[]))
             stub.set_contains_matchers(matchers)
+        return ExitResponse(self.request, stub)
+
+    def doResponse(self):
+        stub = self.context['stub']
+
+        if self.response_mangler is not None:
+            response = self.response_mangler.store(stub.response_body()[0])
+            stub.set_response_body(response)
+
         return ExitResponse(self.request, stub)
