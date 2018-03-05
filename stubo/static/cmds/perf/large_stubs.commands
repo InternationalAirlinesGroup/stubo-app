@@ -1,0 +1,54 @@
+# setup test data, configure the number of scenarios with nbr url arg or it
+# defaults to 100
+# stubo/api/exec/cmds?cmdfile=/static/cmds/perf/perf_setup.commands&nbr=10&startIndex=1000
+
+{% from itertools import cycle %}
+{% import random %}
+{% import string %}
+
+{% set startIndex = int(globals().get('startIndex', [1000])[0]) %}
+{% set nbr = startIndex + int(globals().get('nbr', [5])[0]) %}
+
+# delete any previously existing scenarios
+{% for scenario_counter in range(startIndex, nbr) %}
+delete/stubs?scenario=scenario_{{scenario_counter}}&force=true
+{% end %}
+
+# each scenario has one session for this perf. test
+{% for scenario_counter in range(startIndex, nbr) %}
+begin/session?scenario=scenario_{{scenario_counter}}&session=playback_{{scenario_counter}}&mode=record
+{% end %}
+
+# each session has scenario_counter * 2 stubs
+# each stub has 1 matcher and 1 response  of varying sizes by session number
+#   responses to cycle between 45 and 596kb
+
+{% set matcher_sizes = ['5','15'] %}
+{% set response_sizes = ['45', '596'] %}
+{% set matcher_cycle = cycle(matcher_sizes) %}
+{% set response_cycle = cycle(response_sizes) %}
+{% for sc in range(startIndex, nbr) %}
+{% set ms = matcher_cycle.next() %}
+{% set rs = response_cycle.next() %}
+put/stub?session=playback_{{str(sc)}}&delay_policy=delay_1,20kb.textMatcher,{{rs}}kb.response
+{% for stb in range(sc,(sc + 2)) %}
+{% set ms = matcher_cycle.next() %}
+{% set rs = response_cycle.next() %}
+{% set rnd_string =  "".join( [random.choice(string.letters) for i in xrange(2500)] ) %}
+put/stub?session=playback_{{str(sc)}},text={{rnd_string}},{{rs}}kb.response
+{% end %}
+{% end %}
+
+# end record sessions
+{% for scenario_counter in range(startIndex, nbr+1) %}
+end/session?&session=playback_{{scenario_counter}}
+{% end %}
+
+# begin playback sessions
+{% for scenario_counter in range(startIndex, nbr+1) %}
+begin/session?scenario=scenario_{{scenario_counter}}&session=playback_{{scenario_counter}}&mode=playback
+# test a response
+get/response?session=playback_{{scenario_counter}},15kb.request
+# & cached
+get/response?session=playback_{{scenario_counter}},15kb.request
+{% end %}

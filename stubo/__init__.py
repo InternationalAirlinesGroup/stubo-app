@@ -23,3 +23,4 @@ def stubo_path():
 
 def static_path(*args):
     return os.path.join(stubo_path(), 'static', *args)
+	
