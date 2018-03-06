@@ -133,7 +133,7 @@ class XMLMangler(object):
 </xsl:template>
 {% for name, path in attrs.iteritems() %}
     {% set path = path.xpath %}
-    <xsl:template match="{% raw path %}">
+    <xsl:template match="{{path}}">
       <xsl:attribute name="{{path.partition('@')[-1]}}">
            <xsl:choose>
             <xsl:when test="${{name}} != '___stubo_ignore___'">
@@ -148,7 +148,7 @@ class XMLMangler(object):
 {% end %} 
 
 {% for name, path in elements.iteritems() %}
-    <xsl:template match="{% raw path.xpath %}">
+    <xsl:template match="{{path.xpath}}">
        <xsl:element name="{{path.name}}"  namespace="{namespace-uri(.)}">    
         <xsl:choose>
             <xsl:when test="${{name}} != '___stubo_ignore___'">

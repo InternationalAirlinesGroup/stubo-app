@@ -132,7 +132,7 @@ class TrackRequest(BaseHandler):
         request_size = len(self.request.body)
         # always track put/stub recordings
         if self.track.tracking_level == 'full' or function == 'put/stub':
-            self.track.request_text = unicode(self.request.body)
+            self.track.request_text = self.request.body
             if function == 'get/response' and request_size <= 0:
                 self.track.error = 'NoTextInBody' 
         

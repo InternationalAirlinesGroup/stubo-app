@@ -65,7 +65,7 @@ class Base(AsyncHTTPTestCase):
             'tz_aware': True,
             'db': self.testdb
         })
-        args = {'capped': True, 'size': 1000000}
+        args = {'capped': True, 'size': 100000}
         self.db.create_collection("tracker", **args)
         self.db.tracker.create_index('start_time', -1)
 
