@@ -11,7 +11,7 @@
 import os
 import sys
 
-version = "0.8.16"
+version = "0.8.15"
 version_info = tuple(version.split('.'))
 
 
@@ -23,4 +23,3 @@ def stubo_path():
 
 def static_path(*args):
     return os.path.join(stubo_path(), 'static', *args)
-	
