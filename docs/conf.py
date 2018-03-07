@@ -57,7 +57,7 @@ copyright = '2012-%s, OpenCredo GPL2' % thisyear
 #
 # The short X.Y version.
 # Defined in verion: 'version = "0.6.6"'
-version = "0.8.15"
+version = "0.8.16"
 
 # The full version, including alpha/beta/rc tags.
 release = version + " beta"
