@@ -819,8 +819,8 @@ class TestStubOperations(Base):
         self.assertEqual(len(bd['data']['command_links']), 4, bd['data']['command_links'])
         self.assertTrue('yaml_links' in bd['data'])
 
-        # there should be five items in yaml links: json, yaml, zip, tar.gz, jar
-        self.assertEqual(len(bd['data']['yaml_links']), 5, bd['data']['yaml_links'])
+        # there should be 14 items in yaml links: 10 x json, yaml, zip, tar.gz, jar
+        self.assertEqual(len(bd['data']['yaml_links']), 14, bd['data']['yaml_links'])
 
         self.assertEqual(scenario_name, bd['data']['scenario'])
 
