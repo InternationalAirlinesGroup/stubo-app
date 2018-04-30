@@ -11,6 +11,11 @@ Deprecated:
 
 Removed:
 
+0.8.17
+
+Fixed:
+- Fixed tracker collection insert/update failed due to non-unicode characters found in the request body
+
 0.8.16
 
 Added:
