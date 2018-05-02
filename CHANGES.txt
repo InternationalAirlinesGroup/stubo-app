@@ -11,6 +11,11 @@ Deprecated:
 
 Removed:
 
+0.8.18
+
+Fixed:
+- Fixed InsecurePlatform error when using Requests package on Python env  < 2.7.9
+
 0.8.17
 
 Fixed:
